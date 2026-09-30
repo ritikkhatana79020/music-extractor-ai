@@ -33,42 +33,41 @@ class ExtractRequest(BaseModel):
 
 
 def update_job(job_id, status, progress, message, **extra):
-    jobs[job_id].update({
-        "status": status,
-        "progress": progress,
-        "message": message,
-        **extra
-    })
+    jobs[job_id].update(
+        {
+            "status": status,
+            "progress": progress,
+            "message": message,
+            **extra,
+        }
+    )
 
 
 def process_extraction(job_id, url):
-
     try:
-
         update_job(
             job_id,
             "starting",
             5,
-            "Starting extraction..."
+            "Starting extraction...",
         )
 
         process = subprocess.Popen(
             [
                 sys.executable,
                 str(BASE_DIR / "app.py"),
-                url
+                url,
             ],
             cwd=BASE_DIR,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
-            bufsize=1
+            bufsize=1,
         )
 
         output_file = None
 
         for line in process.stdout:
-
             line = line.strip()
 
             print(line)
@@ -79,7 +78,7 @@ def process_extraction(job_id, url):
                     job_id,
                     "downloading",
                     15,
-                    "Downloading audio..."
+                    "Downloading audio...",
                 )
 
             # Download completed
@@ -88,7 +87,7 @@ def process_extraction(job_id, url):
                     job_id,
                     "downloaded",
                     30,
-                    "Download complete."
+                    "Download complete.",
                 )
 
             # Demucs
@@ -97,20 +96,19 @@ def process_extraction(job_id, url):
                     job_id,
                     "separating",
                     40,
-                    "AI is separating vocals from music..."
+                    "AI is separating vocals from music...",
                 )
 
             # Demucs progress
             match = re.search(
-                r'(\d+)%\|',
-                line
+                r"(\d+)%\|",
+                line,
             )
 
             if match:
-
                 percentage = int(match.group(1))
 
-                # Map Demucs 0-100 → overall 40-85
+                # Map Demucs 0-100 -> overall 40-85
                 overall = 40 + int(
                     percentage * 0.45
                 )
@@ -119,23 +117,22 @@ def process_extraction(job_id, url):
                     job_id,
                     "separating",
                     overall,
-                    f"Separating vocals... {percentage}%"
+                    f"Separating vocals... {percentage}%",
                 )
 
             # FFmpeg
             elif "ffmpeg" in line.lower():
-
                 update_job(
                     job_id,
                     "converting",
                     90,
-                    "Creating MP3..."
+                    "Creating MP3...",
                 )
 
             # Find final output
             match = re.search(
-                r'Background music:\s*(.+)',
-                line
+                r"Background music:\s*(.+)",
+                line,
             )
 
             if match:
@@ -145,31 +142,31 @@ def process_extraction(job_id, url):
 
         return_code = process.wait()
 
-	print(f"Extraction process finished with exit code: {return_code}")
+        print(
+            f"Extraction process finished with exit code: {return_code}"
+        )
 
         if return_code != 0:
-
             raise RuntimeError(
-                f"Music extraction failed. Process exited with code {return_code}. "
-        	f"Check Railway deployment logs for the detailed error."
+                f"Music extraction failed. "
+                f"Process exited with code {return_code}. "
+                f"Check Railway deployment logs for the detailed error."
             )
 
         if not output_file or not output_file.exists():
-
             # Fallback: find newest MP3
             files = sorted(
                 OUTPUT_DIR.glob(
                     "*_background_music.mp3"
                 ),
                 key=lambda f: f.stat().st_mtime,
-                reverse=True
+                reverse=True,
             )
 
             if files:
                 output_file = files[0]
 
         if not output_file:
-
             raise RuntimeError(
                 "Output music file was not found."
             )
@@ -180,11 +177,10 @@ def process_extraction(job_id, url):
             100,
             "Extraction complete.",
             filename=output_file.name,
-            download_url=f"/download/{output_file.name}"
+            download_url=f"/download/{output_file.name}",
         )
 
     except Exception as error:
-
         print(
             f"Job {job_id} failed: {error}"
         )
@@ -193,29 +189,26 @@ def process_extraction(job_id, url):
             job_id,
             "failed",
             0,
-            str(error)
+            str(error),
         )
 
 
 @app.get("/health")
 def health():
-
     return {
         "status": "ok",
-        "service": "music-extractor-ai"
+        "service": "music-extractor-ai",
     }
 
 
 @app.post("/extract")
 def extract(request: ExtractRequest):
-
     url = request.url.strip()
 
     if not url:
-
         raise HTTPException(
             status_code=400,
-            detail="YouTube URL is required."
+            detail="YouTube URL is required.",
         )
 
     job_id = str(uuid.uuid4())
@@ -223,55 +216,51 @@ def extract(request: ExtractRequest):
     jobs[job_id] = {
         "status": "queued",
         "progress": 0,
-        "message": "Job created."
+        "message": "Job created.",
     }
 
     thread = threading.Thread(
         target=process_extraction,
         args=(job_id, url),
-        daemon=True
+        daemon=True,
     )
 
     thread.start()
 
     return {
         "job_id": job_id,
-        "status": "queued"
+        "status": "queued",
     }
 
 
 @app.get("/status/{job_id}")
 def get_status(job_id: str):
-
     job = jobs.get(job_id)
 
     if not job:
-
         raise HTTPException(
             status_code=404,
-            detail="Job not found."
+            detail="Job not found.",
         )
 
     return {
         "job_id": job_id,
-        **job
+        **job,
     }
 
 
 @app.get("/download/{filename}")
 def download(filename: str):
-
     output_file = OUTPUT_DIR / filename
 
     if not output_file.exists():
-
         raise HTTPException(
             status_code=404,
-            detail="File not found."
+            detail="File not found.",
         )
 
     return FileResponse(
         output_file,
         media_type="audio/mpeg",
-        filename=output_file.name
+        filename=output_file.name,
     )
