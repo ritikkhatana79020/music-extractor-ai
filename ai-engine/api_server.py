@@ -145,10 +145,13 @@ def process_extraction(job_id, url):
 
         return_code = process.wait()
 
+	print(f"Extraction process finished with exit code: {return_code}")
+
         if return_code != 0:
 
             raise RuntimeError(
-                "Music extraction failed."
+                f"Music extraction failed. Process exited with code {return_code}. "
+        	f"Check Railway deployment logs for the detailed error."
             )
 
         if not output_file or not output_file.exists():
