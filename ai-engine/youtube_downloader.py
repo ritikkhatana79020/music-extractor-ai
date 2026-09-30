@@ -46,7 +46,10 @@ def download_audio(url):
     )
 
     if result.returncode != 0:
-        raise RuntimeError("Could not retrieve YouTube video information.")
+        raise RuntimeError(
+            "Could not retrieve YouTube video information.\n"
+            f"yt-dlp error:\n{result.stderr.strip()}"
+        )
 
     title = result.stdout.strip()
     safe_title = sanitize_filename(title)
