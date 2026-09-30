@@ -1,7 +1,7 @@
 fastapi
 uvicorn[standard]
 pydantic
-yt-dlp
+yt-dlp[default]
 torch
 torchaudio
 demucs==4.0.1
