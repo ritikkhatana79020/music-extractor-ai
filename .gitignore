@@ -1,0 +1,21 @@
+# Python
+venv/
+__pycache__/
+*.py[cod]
+
+# macOS
+.DS_Store
+
+# Generated files
+ai-engine/output/*
+ai-engine/temp/*
+ai-engine/separated/*
+ai-engine/input/*
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log

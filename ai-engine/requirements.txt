@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+pydantic
+yt-dlp
+torch
+torchaudio
+demucs==4.0.1
+torchcodec

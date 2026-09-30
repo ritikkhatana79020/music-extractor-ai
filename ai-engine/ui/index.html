@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Extractor AI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<main class="app">
+
+    <section class="hero">
+
+        <div class="brand">
+            <div class="brand-icon">♫</div>
+            <span>Music Extractor AI</span>
+        </div>
+
+        <div class="hero-copy">
+
+            <p class="eyebrow">
+                AI AUDIO SEPARATION
+            </p>
+
+            <h1>
+                Extract the music.<br>
+                <span>Leave the vocals.</span>
+            </h1>
+
+            <p class="subtitle">
+                Paste a YouTube URL and let AI isolate the
+                background music from the vocals.
+            </p>
+
+        </div>
+
+        <div class="extract-card">
+
+            <label for="youtubeUrl">
+                YouTube URL
+            </label>
+
+            <div class="input-row">
+
+                <input
+                    id="youtubeUrl"
+                    type="url"
+                    placeholder="https://www.youtube.com/watch?v=..."
+                    autocomplete="off"
+                >
+
+                <button id="extractButton">
+                    Extract Music
+                </button>
+
+            </div>
+
+            <p id="inputError" class="input-error hidden"></p>
+
+            <div id="progressSection" class="progress-section hidden">
+
+                <div class="progress-header">
+
+                    <span id="statusText">
+                        Starting extraction...
+                    </span>
+
+                    <span id="progressPercent">
+                        0%
+                    </span>
+
+                </div>
+
+                <div class="progress-track">
+
+                    <div
+                        id="progressBar"
+                        class="progress-bar">
+                    </div>
+
+                </div>
+
+                <p
+                    id="progressDetail"
+                    class="progress-detail">
+                    Your audio is being processed.
+                </p>
+
+            </div>
+
+            <div id="resultSection" class="result-section hidden">
+
+                <div class="success-icon">
+                    ✓
+                </div>
+
+                <div class="result-info">
+
+                    <p class="result-label">
+                        EXTRACTION COMPLETE
+                    </p>
+
+                    <h2 id="resultFilename">
+                        Background music ready
+                    </h2>
+
+                </div>
+
+                <audio
+                    id="audioPlayer"
+                    controls>
+                </audio>
+
+                <a
+                    id="downloadButton"
+                    class="download-button"
+                    href="#"
+                    download>
+                    Download MP3
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="features">
+
+            <div class="feature">
+
+                <span>01</span>
+
+                <div>
+                    <strong>Paste URL</strong>
+                    <p>
+                        Provide a YouTube video.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="feature">
+
+                <span>02</span>
+
+                <div>
+                    <strong>AI Separation</strong>
+                    <p>
+                        Demucs separates vocals and music.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="feature">
+
+                <span>03</span>
+
+                <div>
+                    <strong>Download</strong>
+                    <p>
+                        Get your background track as MP3.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <footer>
+
+        <span>
+            Music Extractor AI
+        </span>
+
+        <span>
+            Powered by yt-dlp · Demucs · FFmpeg
+        </span>
+
+    </footer>
+
+</main>
+
+<script src="script.js"></script>
+
+</body>
+</html>

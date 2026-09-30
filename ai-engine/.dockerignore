@@ -1,0 +1,14 @@
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+
+output/*
+temp/*
+separated/*
+input/*
+
+.git/
+.gitignore
+
+*.log
