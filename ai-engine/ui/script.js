@@ -1,4 +1,4 @@
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = "https://music-extractor-ai-production.up.railway.app";
 
 const urlInput = document.getElementById("youtubeUrl");
 const extractButton = document.getElementById("extractButton");
