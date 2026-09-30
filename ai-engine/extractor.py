@@ -4,6 +4,7 @@ import sys
 import subprocess
 from pathlib import Path
 
+
 def sanitize_filename(filename):
     filename = re.sub(r'[<>:"/\\|?*]', '', filename)
     filename = re.sub(r'\s+', ' ', filename).strip()
@@ -15,22 +16,38 @@ OUTPUT_DIR = BASE_DIR / "output"
 TEMP_DIR = BASE_DIR / "temp"
 DEMUCS_DEVICE = os.getenv("DEMUCS_DEVICE", "cpu")
 
+
 def run_command(command):
     print("\nRunning:")
     print(" ".join(command))
     print()
 
-    result = subprocess.run(command)
+    result = subprocess.run(
+        command,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True
+    )
+
+    print(result.stdout)
 
     if result.returncode != 0:
-        raise RuntimeError("Audio processing failed.")
+        raise RuntimeError(
+            f"Command failed with exit code {result.returncode}.\n"
+            f"Command: {' '.join(command)}\n"
+            f"Output:\n{result.stdout[-5000:]}"
+        )
+
+    return result.stdout
 
 
 def extract_music(input_file):
     input_file = Path(input_file).resolve()
 
     if not input_file.exists():
-        raise FileNotFoundError(f"File not found: {input_file}")
+        raise FileNotFoundError(
+            f"File not found: {input_file}"
+        )
 
     OUTPUT_DIR.mkdir(exist_ok=True)
     TEMP_DIR.mkdir(exist_ok=True)
@@ -48,6 +65,8 @@ def extract_music(input_file):
         sys.executable,
         "-m",
         "demucs",
+        "-n",
+        "htdemucs",
         "--two-stems=vocals",
         "-d",
         DEMUCS_DEVICE,
@@ -68,7 +87,12 @@ def extract_music(input_file):
         )
 
     safe_name = sanitize_filename(input_file.stem)
-    output_file = OUTPUT_DIR / f"{safe_name}_background_music.mp3"
+
+    output_file = (
+        OUTPUT_DIR /
+        f"{safe_name}_background_music.mp3"
+    )
+
     # Convert WAV to MP3
     run_command([
         "ffmpeg",
