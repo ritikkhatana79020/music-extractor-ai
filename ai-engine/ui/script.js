@@ -1,4 +1,4 @@
-const API_URL = "https://music-extractor-ai-production.up.railway.app";
+const API_URL = "";
 
 const urlInput = document.getElementById("youtubeUrl");
 const extractButton = document.getElementById("extractButton");

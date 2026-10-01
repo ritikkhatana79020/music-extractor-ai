@@ -1,3 +1,4 @@
+import os
 import re
 import sys
 import subprocess
@@ -7,7 +8,10 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent
 TEMP_DIR = BASE_DIR / "temp"
 TEMP_DIR.mkdir(exist_ok=True)
-
+POT_PROVIDER_URL = os.getenv(
+    "YTDLP_POT_PROVIDER_URL",
+    "http://127.0.0.1:4416"
+)
 
 def sanitize_filename(filename):
     """
@@ -30,11 +34,11 @@ def download_audio(url):
     # First get the video title
     title_command = [
         sys.executable,
-        "-m",
-        "yt_dlp",
+        "-m", "yt_dlp",
         "--no-playlist",
-        "--print",
-        "%(title)s",
+        "--extractor-args",
+        f"youtubepot-bgutilhttp:base_url={POT_PROVIDER_URL}",
+        "--print", "%(title)s",
         "--skip-download",
         url
     ]
@@ -58,16 +62,14 @@ def download_audio(url):
 
     command = [
         sys.executable,
-        "-m",
-        "yt_dlp",
+        "-m", "yt_dlp",
         "--no-playlist",
-        "-f",
-        "bestaudio/best",
+        "--extractor-args",
+        f"youtube:player_client=default,web_embedded;youtubepot-bgutilhttp:base_url={POT_PROVIDER_URL}",
+        "-f", "bestaudio/best",
         "-x",
-        "--audio-format",
-        "wav",
-        "-o",
-        str(output_file),
+        "--audio-format", "wav",
+        "-o", str(output_file),
         url
     ]
 

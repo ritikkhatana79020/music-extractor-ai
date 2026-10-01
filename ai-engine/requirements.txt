@@ -6,3 +6,4 @@ torch
 torchaudio
 demucs==4.0.1
 torchcodec
+bgutil-ytdlp-pot-provider

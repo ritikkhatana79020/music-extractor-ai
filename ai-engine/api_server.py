@@ -6,6 +6,8 @@ import threading
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -15,6 +17,8 @@ BASE_DIR = Path(__file__).resolve().parent
 OUTPUT_DIR = BASE_DIR / "output"
 
 app = FastAPI()
+BASE_DIR = Path(__file__).resolve().parent
+UI_DIR = BASE_DIR / "ui"
 
 app.add_middleware(
     CORSMiddleware,
@@ -264,3 +268,4 @@ def download(filename: str):
         media_type="audio/mpeg",
         filename=output_file.name,
     )
+app.mount("/", StaticFiles(directory=UI_DIR, html=True), name="ui")
