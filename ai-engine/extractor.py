@@ -68,6 +68,8 @@ def extract_music(input_file):
         "-n",
         "htdemucs",
         "--two-stems=vocals",
+        "--segment",
+        "4",
         "-d",
         DEMUCS_DEVICE,
         "-o",
