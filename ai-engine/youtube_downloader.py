@@ -8,10 +8,12 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent
 TEMP_DIR = BASE_DIR / "temp"
 TEMP_DIR.mkdir(exist_ok=True)
+
 POT_PROVIDER_URL = os.getenv(
     "YTDLP_POT_PROVIDER_URL",
     "http://127.0.0.1:4416"
 )
+
 
 def sanitize_filename(filename):
     """
@@ -37,7 +39,7 @@ def download_audio(url):
         "-m", "yt_dlp",
         "--no-playlist",
         "--extractor-args",
-        f"youtubepot-bgutilhttp:base_url={POT_PROVIDER_URL}",
+        f"youtube:player_client=web_embedded;youtubepot-bgutilhttp:base_url={POT_PROVIDER_URL}",
         "--print", "%(title)s",
         "--skip-download",
         url
@@ -65,7 +67,7 @@ def download_audio(url):
         "-m", "yt_dlp",
         "--no-playlist",
         "--extractor-args",
-        f"youtube:player_client=default,web_embedded;youtubepot-bgutilhttp:base_url={POT_PROVIDER_URL}",
+        f"youtube:player_client=web_embedded;youtubepot-bgutilhttp:base_url={POT_PROVIDER_URL}",
         "-f", "bestaudio/best",
         "-x",
         "--audio-format", "wav",
